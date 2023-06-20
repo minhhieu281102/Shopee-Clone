@@ -1,20 +1,17 @@
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import Input from 'src/components/Input'
-import { getRules } from 'src/utils/rules'
+import { loginSchema, LoginSchema } from 'src/utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
 
-interface FormData {
-  email: string
-  password: string
-}
+type FormData = LoginSchema
 export default function Login() {
   const {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<FormData>()
+  } = useForm<FormData>({ resolver: yupResolver(loginSchema) })
 
-  const rules = getRules()
   const onSubmit = handleSubmit((data) => {
     console.log(data)
   })
@@ -32,7 +29,6 @@ export default function Login() {
                 className='mt-8'
                 errorMessage={errors.email?.message}
                 placeholder='Email'
-                rules={rules.email}
               />
               <Input
                 name='password'
@@ -41,7 +37,6 @@ export default function Login() {
                 className='mt-2'
                 errorMessage={errors.password?.message}
                 placeholder='Password'
-                rules={rules.password}
               />
               <div className='mt-3'>
                 <button
