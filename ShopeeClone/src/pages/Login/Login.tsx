@@ -3,18 +3,45 @@ import { Link } from 'react-router-dom'
 import Input from 'src/components/Input'
 import { loginSchema, LoginSchema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation } from '@tanstack/react-query'
+import { login } from 'src/apis/auth.api'
+import { ResponseApi } from 'src/types/utils.type'
+import { isAxiosUnproscessableEntityError } from 'src/utils/utils'
 
 type FormData = LoginSchema
 export default function Login() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors }
   } = useForm<FormData>({ resolver: yupResolver(loginSchema) })
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data)
+  const loginMutation = useMutation({
+    mutationFn: (body: FormData) => login(body)
   })
+
+  const onSubmit = handleSubmit((data) => {
+    loginMutation.mutate(data, {
+      onSuccess: (data) => {
+        console.log(data)
+      },
+      onError: (error) => {
+        if (isAxiosUnproscessableEntityError<ResponseApi<FormData>>(error)) {
+          const formError = error.response?.data.data
+          if (formError) {
+            Object.keys(formError).forEach((key) => {
+              setError(key as keyof FormData, {
+                message: formError[key as keyof FormData],
+                type: 'server'
+              })
+            })
+          }
+        }
+      }
+    })
+  })
+
   return (
     <div className='bg-orange'>
       <div className='container'>
