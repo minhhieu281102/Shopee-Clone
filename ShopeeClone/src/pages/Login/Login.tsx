@@ -1,15 +1,21 @@
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Input from 'src/components/Input'
 import { loginSchema, LoginSchema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import { login } from 'src/apis/auth.api'
-import { ResponseApi } from 'src/types/utils.type'
+import { ErrorResponse } from 'src/types/utils.type'
 import { isAxiosUnproscessableEntityError } from 'src/utils/utils'
+import { useContext } from 'react'
+import { AppContext } from 'src/contexts/app.context'
+import Button from 'src/components/Button'
+import path from 'src/constaints/path'
 
 type FormData = LoginSchema
 export default function Login() {
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -24,10 +30,12 @@ export default function Login() {
   const onSubmit = handleSubmit((data) => {
     loginMutation.mutate(data, {
       onSuccess: (data) => {
-        console.log(data)
+        setIsAuthenticated(true)
+        setProfile(data.data.data.user)
+        navigate(path.home)
       },
       onError: (error) => {
-        if (isAxiosUnproscessableEntityError<ResponseApi<FormData>>(error)) {
+        if (isAxiosUnproscessableEntityError<ErrorResponse<FormData>>(error)) {
           const formError = error.response?.data.data
           if (formError) {
             Object.keys(formError).forEach((key) => {
@@ -66,16 +74,18 @@ export default function Login() {
                 placeholder='Password'
               />
               <div className='mt-3'>
-                <button
+                <Button
+                  isLoading={loginMutation.isLoading}
+                  disabled={loginMutation.isLoading}
                   type='submit'
-                  className='w-full bg-red-500 px-2 py-4 text-center text-sm uppercase text-white hover:bg-red-600'
+                  className='flex w-full items-center justify-center bg-red-500 px-2 py-4 text-sm uppercase text-white hover:bg-red-600'
                 >
                   Đăng nhập
-                </button>
+                </Button>
               </div>
               <div className='mt-8 flex items-center justify-center'>
                 <span className='text-gray-400'>Bạn mới biết đến Shopee? </span>
-                <Link to={'/register'} className='pl-1 text-red-400'>
+                <Link to={path.register} className='pl-1 text-red-400'>
                   Đăng ký
                 </Link>
               </div>
