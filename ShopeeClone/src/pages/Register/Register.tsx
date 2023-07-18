@@ -4,7 +4,7 @@ import { schema, Schema } from 'src/utils/rules'
 import Input from 'src/components/Input'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
-import { registerAccount } from 'src/apis/auth.api'
+import authApi from 'src/apis/auth.api'
 import { omit } from 'lodash'
 import { isAxiosUnproscessableEntityError } from 'src/utils/utils'
 import { ErrorResponse } from 'src/types/utils.type'
@@ -13,7 +13,8 @@ import { useContext } from 'react'
 import Button from 'src/components/Button'
 import path from 'src/constaints/path'
 
-type FormData = Schema
+type FormData = Pick<Schema, 'email' | 'confirm_password' | 'password'>
+const registerSchema = schema.pick(['confirm_password', 'email', 'password'])
 
 export default function Register() {
   const { setIsAuthenticated, setProfile } = useContext(AppContext)
@@ -23,10 +24,10 @@ export default function Register() {
     handleSubmit,
     setError,
     formState: { errors }
-  } = useForm<FormData>({ resolver: yupResolver(schema) })
+  } = useForm<FormData>({ resolver: yupResolver(registerSchema) })
 
   const registerAccountMutation = useMutation({
-    mutationFn: (body: Omit<FormData, 'confirm_password'>) => registerAccount(body)
+    mutationFn: (body: Omit<FormData, 'confirm_password'>) => authApi.registerAccount(body)
   })
 
   const onSubmit = handleSubmit((data) => {
