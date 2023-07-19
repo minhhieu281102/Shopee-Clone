@@ -1,5 +1,5 @@
 import { sortBy, order as orderConstant } from 'src/constaints/product'
-import { QueryConfig } from '../ProductList'
+import { QueryConfig } from '../../ProductList'
 import { ProductListConfig } from 'src/types/product.type'
 import classNames from 'classnames'
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'

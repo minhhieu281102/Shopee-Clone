@@ -1,7 +1,7 @@
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import Button from 'src/components/Button'
 import path from 'src/constaints/path'
-import { QueryConfig } from '../ProductList'
+import { QueryConfig } from '../../ProductList'
 import { Category } from 'src/types/category.type'
 import classNames from 'classnames'
 import { useForm, Controller } from 'react-hook-form'

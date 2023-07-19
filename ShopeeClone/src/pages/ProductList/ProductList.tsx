@@ -1,8 +1,8 @@
 import useQueryParams from 'src/hooks/useQueryParams'
 import { omitBy, isUndefined } from 'lodash'
-import ASideFilter from './ASideFilter'
-import Product from './Product'
-import SortProductList from './SortProductList'
+import ASideFilter from './components/ASideFilter'
+import Product from './components/Product'
+import SortProductList from './components/SortProductList'
 import { useQuery } from '@tanstack/react-query'
 import productApi from 'src/apis/product.apis'
 import Pagination from 'src/components/Pagination'
@@ -13,7 +13,7 @@ export type QueryConfig = {
   [key in keyof ProductListConfig]: string
 }
 
-export default function ProdictList() {
+export default function ProductList() {
   const queryParams: QueryConfig = useQueryParams()
   const queryConfig: QueryConfig = omitBy(
     {
