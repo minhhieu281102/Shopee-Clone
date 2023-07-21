@@ -1,12 +1,33 @@
-import { Link } from 'react-router-dom'
+import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import Popover from '../Popover'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import authApi from 'src/apis/auth.api'
 import { AppContext } from 'src/contexts/app.context'
 import { useContext } from 'react'
 import path from 'src/constaints/path'
+import useQueryConfig from 'src/hooks/useQueryConfig'
+import { useForm } from 'react-hook-form'
+import { Schema, schema } from 'src/utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { omit } from 'lodash'
+import { purchasesStatus } from 'src/constaints/purchase'
+import purchaseApi from 'src/apis/purchase.api'
+import { formatCurrency } from 'src/utils/utils'
+
+type FormData = Pick<Schema, 'name'>
+
+const nameSchema = schema.pick(['name'])
+const MAX_PURCHASE = 5
 
 export default function Header() {
+  const queryConfig = useQueryConfig()
+  const navigate = useNavigate()
+  const { register, handleSubmit } = useForm<FormData>({
+    defaultValues: {
+      name: ''
+    },
+    resolver: yupResolver(nameSchema)
+  })
   const { setIsAuthenticated, isAuthenticated, setProfile, profile } = useContext(AppContext)
   const logoutMutation = useMutation({
     mutationFn: authApi.logout,
@@ -16,9 +37,35 @@ export default function Header() {
     }
   })
 
+  const { data: purchasesInCartData } = useQuery({
+    queryKey: ['purchases', { status: purchasesStatus.inCart }],
+    queryFn: () => purchaseApi.getPurchaseList({ status: purchasesStatus.inCart })
+  })
+
+  const purchasesInCart = purchasesInCartData?.data.data
+
   const handleLogout = () => {
     logoutMutation.mutate()
   }
+
+  const onSubmitSearch = handleSubmit((data) => {
+    const config = queryConfig.order
+      ? omit(
+          {
+            ...queryConfig,
+            name: data.name
+          },
+          ['order', 'sort_by']
+        )
+      : {
+          ...queryConfig,
+          name: data.name
+        }
+    navigate({
+      pathname: path.home,
+      search: createSearchParams(config).toString()
+    })
+  })
   return (
     <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2 text-white'>
       <div className='container'>
@@ -124,11 +171,11 @@ export default function Header() {
               </g>
             </svg>
           </Link>
-          <form className='col-span-8'>
+          <form className='col-span-8' onSubmit={onSubmitSearch}>
             <div className='flex rounded-sm bg-white p-1 '>
               <input
+                {...register('name')}
                 type='text'
-                name='search'
                 placeholder='FREE SHIP ĐƠN TỪ 0Đ'
                 className='flex-grow border-none bg-transparent px-3 py-2 text-black outline-none'
               />
@@ -154,89 +201,52 @@ export default function Header() {
             <Popover
               renderPopover={
                 <div className='relative max-w-[400px]  rounded-sm bg-white shadow-md'>
-                  <div>
-                    <div className='p-2 text-gray-400'>Sản Phẩm Mới Thêm</div>
-                    <div className='mt-3'>
-                      <div className='flex p-2 hover:bg-gray-100'>
-                        <div className=' flex-shrink-0 '>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lin86momi5si01_tn'
-                            alt='anh'
-                            className='h-11 w-full object-cover'
-                          />
-                        </div>
-                        <div className='ml-2 flex-grow overflow-hidden'>
-                          <div className='truncate'>
-                            Dầu gội dược liệu Nguyên Xuân Xanh dưỡng tóc 600ml - Tặng thêm 10% thể tích giá không đổi
+                  {purchasesInCart ? (
+                    <div>
+                      <div>
+                        <div className='p-2 text-gray-400'>Sản Phẩm Mới Thêm</div>
+                        {purchasesInCart.slice(0, 5).map((purchese) => (
+                          <div className='flex p-2 hover:bg-gray-100' key={purchese._id}>
+                            <div className=' flex-shrink-0 '>
+                              <img
+                                src={purchese.product.image}
+                                alt={purchese.product.name}
+                                className='h-11 w-full object-cover'
+                              />
+                            </div>
+                            <div className='ml-2 flex-grow overflow-hidden'>
+                              <div className='truncate'>{purchese.product.name}</div>
+                            </div>
+                            <div className='ml-2 flex-shrink-0'>
+                              <span className='text-orange'>₫{formatCurrency(purchese.product.price)}</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className='ml-2 flex-shrink-0'>
-                          <span className='text-orange'>₫149.000</span>
-                        </div>
+                        ))}
                       </div>
-                      <div className=' flex p-2 hover:bg-gray-100'>
-                        <div className=' flex-shrink-0 '>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lin86momi5si01_tn'
-                            alt='anh'
-                            className='h-11 w-full object-cover'
-                          />
+                      <div className='mt-3 flex items-center justify-between p-2'>
+                        <div className='text-xs text-gray-500'>
+                          {purchasesInCart.length > MAX_PURCHASE ? purchasesInCart.length - MAX_PURCHASE : ''} Thêm Vào
+                          Giỏ Hàng
                         </div>
-                        <div className='ml-2 flex-grow overflow-hidden'>
-                          <div className='truncate'>
-                            Dầu gội dược liệu Nguyên Xuân Xanh dưỡng tóc 600ml - Tặng thêm 10% thể tích giá không đổi
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shrink-0'>
-                          <span className='text-orange'>₫149.000</span>
-                        </div>
-                      </div>
-                      <div className=' flex p-2 hover:bg-gray-100'>
-                        <div className=' flex-shrink-0 '>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lin86momi5si01_tn'
-                            alt='anh'
-                            className='h-11 w-full object-cover'
-                          />
-                        </div>
-                        <div className='ml-2 flex-grow overflow-hidden'>
-                          <div className='truncate'>
-                            Dầu gội dược liệu Nguyên Xuân Xanh dưỡng tóc 600ml - Tặng thêm 10% thể tích giá không đổi
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shrink-0'>
-                          <span className='text-orange'>₫149.000</span>
-                        </div>
-                      </div>
-                      <div className='flex p-2 hover:bg-gray-100'>
-                        <div className=' flex-shrink-0 '>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/vn-11134207-7qukw-lin86momi5si01_tn'
-                            alt='anh'
-                            className='h-11 w-full object-cover'
-                          />
-                        </div>
-                        <div className='ml-2 flex-grow overflow-hidden'>
-                          <div className='truncate'>
-                            Dầu gội dược liệu Nguyên Xuân Xanh dưỡng tóc 600ml - Tặng thêm 10% thể tích giá không đổi
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shrink-0'>
-                          <span className='text-orange'>₫149.000</span>
-                        </div>
+                        <button className='rounded-sm bg-orange px-4 py-2 text-white hover:bg-opacity-80'>
+                          Xem Giỏ Hàng
+                        </button>
                       </div>
                     </div>
-                    <div className='mt-3 flex items-center justify-between p-2'>
-                      <div className='text-xs text-gray-500'>Thêm Vào Giỏ Hàng</div>
-                      <button className='rounded-sm bg-orange px-4 py-2 text-white hover:bg-opacity-80'>
-                        Xem Giỏ Hàng
-                      </button>
+                  ) : (
+                    <div className='flex h-[300px] w-[300px] flex-col items-center justify-center p-2'>
+                      <img
+                        src='https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/assets/9bdd8040b334d31946f49e36beaf32db.png'
+                        alt='anh'
+                        className=' h-[100px] w-[100px]  object-cover'
+                      />
+                      <div className=' pt-2 text-center'>Chưa có sản phẩm</div>
                     </div>
-                  </div>
+                  )}
                 </div>
               }
             >
-              <Link to={path.home}>
+              <Link to={path.home} className='relative'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -251,6 +261,9 @@ export default function Header() {
                     d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z'
                   />
                 </svg>
+                <span className='absolute left-[17px] top-[-5px] rounded-full bg-white px-[9px] py-[1px] text-xs text-orange'>
+                  {purchasesInCart?.length}
+                </span>
               </Link>
             </Popover>
           </div>

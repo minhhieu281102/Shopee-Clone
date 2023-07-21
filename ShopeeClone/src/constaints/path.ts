@@ -1,5 +1,5 @@
 const path = {
-  home: '',
+  home: '/',
   login: '/login',
   register: '/register',
   logout: '/logout',
