@@ -9,7 +9,11 @@ import { useContext } from 'react'
 import { AppContext } from './contexts/app.context'
 import ProductDetail from './pages/ProductDetail'
 import path from './constaints/path'
+import CartLayout from './layouts/CartLayout'
 import Cart from './pages/Cart'
+import UserLayout from './pages/User/layouts/UserLayout'
+import ChangePassword from './pages/User/Pages/ChangePassword'
+import HistoryPurchase from './pages/User/Pages/HistoryPurchase'
 
 function ProtectedRoute() {
   const { isAuthenticated } = useContext(AppContext)
@@ -28,20 +32,34 @@ export default function useRouteElements() {
       element: <ProtectedRoute />,
       children: [
         {
-          path: path.profile,
+          path: path.cart,
           element: (
-            <MainLayOut>
-              <Profile />
-            </MainLayOut>
+            <CartLayout>
+              <Cart />
+            </CartLayout>
           )
         },
         {
-          path: path.cart,
+          path: path.user,
           element: (
             <MainLayOut>
-              <Cart />
+              <UserLayout />
             </MainLayOut>
-          )
+          ),
+          children: [
+            {
+              path: path.profile,
+              element: <Profile />
+            },
+            {
+              path: path.changePassword,
+              element: <ChangePassword />
+            },
+            {
+              path: path.historyPurchase,
+              element: <HistoryPurchase />
+            }
+          ]
         }
       ]
     },
