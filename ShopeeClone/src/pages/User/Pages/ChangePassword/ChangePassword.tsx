@@ -1,5 +1,5 @@
 import React from 'react'
 
-export default function ChangePAssword() {
-  return <div>ChangePAssword</div>
+export default function ChangePassword() {
+  return <div>ChangePassword</div>
 }
