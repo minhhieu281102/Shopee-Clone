@@ -49,18 +49,6 @@ export default function Register() {
               })
             })
           }
-          // if (formError?.email) {
-          //   setError('email', {
-          //     message: formError.email,
-          //     type: 'server'
-          //   })
-          // }
-          // if (formError?.password) {
-          //   setError('password', {
-          //     message: formError.password,
-          //     type: 'server'
-          //   })
-          // }
         }
       }
     })
