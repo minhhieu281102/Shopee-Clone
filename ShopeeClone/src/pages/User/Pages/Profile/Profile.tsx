@@ -6,13 +6,14 @@ import { UserSchema, userSchema } from 'src/utils/rules'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import InputNumber from 'src/components/InputNumber'
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import DateSelect from '../../components/DateSelect'
 import { AppContext } from 'src/contexts/app.context'
 import { toast } from 'react-toastify'
 import { setProfileToLS } from 'src/utils/auth'
 import { getAvatarUrl, isAxiosUnproscessableEntityError } from 'src/utils/utils'
 import { ErrorResponse } from 'src/types/utils.type'
+import InputFile from 'src/components/InputFile'
 
 type FormData = Pick<UserSchema, 'name' | 'address' | 'phone' | 'date_of_birth' | 'avatar'>
 type FormDataError = Omit<FormData, 'date_of_birth'> & {
@@ -22,7 +23,6 @@ const profileSchema = userSchema.pick(['name', 'address', 'phone', 'avatar', 'da
 
 export default function Profile() {
   const { setProfile } = useContext(AppContext)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File>()
 
   const previewImage = useMemo(() => {
@@ -44,7 +44,7 @@ export default function Profile() {
       avatar: '',
       date_of_birth: new Date(1990, 0, 1)
     },
-    resolver: yupResolver(profileSchema)
+    resolver: yupResolver<FormData>(profileSchema)
   })
   const { data: profileData, refetch } = useQuery({
     queryKey: ['profile'],
@@ -103,14 +103,10 @@ export default function Profile() {
     }
   })
 
-  const handleUpload = () => {
-    fileInputRef.current?.click()
+  const handleChangeFile = (file?: File) => {
+    setFile(file)
   }
 
-  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileFromLocal = event.target.files?.[0]
-    setFile(fileFromLocal)
-  }
   return (
     <div className='rounded-sm bg-white px-2 pb-10 shadow-md md:px-7 md:pb-20'>
       <div className='border-b border-b-gray-200 py-6'>
@@ -195,14 +191,7 @@ export default function Profile() {
                 className='h-full w-full rounded-full object-cover'
               />
             </div>
-            <input className='hidden' type='file' accept='.jpg,.jpeg,.png' ref={fileInputRef} onChange={onFileChange} />
-            <button
-              onClick={handleUpload}
-              type='button'
-              className='flex h-10 items-center justify-end rounded-sm border bg-white px-6 text-sm text-gray-600 shadow-sm'
-            >
-              Chọn ảnh
-            </button>
+            <InputFile onChange={handleChangeFile} />
             <div className='mt-3 text-gray-400'>
               <div>Dụng lượng file tối đa 1 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>
