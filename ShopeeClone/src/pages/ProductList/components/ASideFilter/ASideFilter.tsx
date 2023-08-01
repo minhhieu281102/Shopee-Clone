@@ -10,7 +10,7 @@ import { Schema, schema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { NoundefinedField } from 'src/types/utils.type'
 import RatingStar from '../RatingStar'
-import { omit } from 'lodash'
+import omit from 'lodash/omit'
 
 interface Props {
   queryConfig: QueryConfig
@@ -26,7 +26,6 @@ export default function ASideFilter({ categories, queryConfig }: Props) {
   const {
     control,
     handleSubmit,
-    watch,
     trigger,
     formState: { errors }
   } = useForm<FormData>({

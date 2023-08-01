@@ -4,7 +4,7 @@ import { ProductListConfig } from 'src/types/product.type'
 import classNames from 'classnames'
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import path from 'src/constaints/path'
-import { omit } from 'lodash'
+import omit from 'lodash/omit'
 
 interface Props {
   queryConfig: QueryConfig

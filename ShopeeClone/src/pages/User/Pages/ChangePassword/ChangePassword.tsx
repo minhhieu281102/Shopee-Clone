@@ -7,7 +7,7 @@ import { useMutation } from '@tanstack/react-query'
 import userApi from 'src/apis/user.api'
 import { ErrorResponse } from 'src/types/utils.type'
 import { isAxiosUnproscessableEntityError } from 'src/utils/utils'
-import { omit } from 'lodash'
+import omit from 'lodash/omit'
 import { toast } from 'react-toastify'
 
 type FormData = Pick<UserSchema, 'confirm_password' | 'password' | 'new_password'>
