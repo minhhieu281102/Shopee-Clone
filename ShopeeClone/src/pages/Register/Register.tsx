@@ -76,6 +76,7 @@ export default function Register() {
                 type='password'
                 className='mt-2'
                 errorMessage={errors.password?.message}
+                classNameEye='absolute right-[5px] top-[11px] h-6 w-6 cursor-pointer'
                 placeholder='Password'
               />
               <Input
@@ -84,6 +85,7 @@ export default function Register() {
                 type='password'
                 className='mt-2'
                 errorMessage={errors.confirm_password?.message}
+                classNameEye='absolute right-[5px] top-[11px] h-6 w-6 cursor-pointer'
                 placeholder='Confirm password'
               />
               <div className='mt-2'>

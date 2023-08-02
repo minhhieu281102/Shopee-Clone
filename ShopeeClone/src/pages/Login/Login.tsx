@@ -73,6 +73,7 @@ export default function Login() {
                 className='mt-2'
                 errorMessage={errors.password?.message}
                 placeholder='Password'
+                classNameEye='absolute right-[5px] top-[11px] h-6 w-6 cursor-pointer'
               />
               <div className='mt-3'>
                 <Button
