@@ -9,10 +9,12 @@ import purchaseApi from 'src/apis/purchase.api'
 import { formatCurrency } from 'src/utils/utils'
 import NavHeader from '../NavHeader'
 import useSearchProducts from 'src/hooks/useSearchProducts'
+import { useTranslation } from 'react-i18next'
 
 const MAX_PURCHASE = 5
 
 export default function Header() {
+  const { t } = useTranslation('home')
   const { isAuthenticated } = useContext(AppContext)
   const { onSubmitSearch, register } = useSearchProducts()
   const { data: purchasesInCartData } = useQuery({
@@ -68,7 +70,7 @@ export default function Header() {
                   {purchasesInCart && purchasesInCart.length > 0 ? (
                     <div>
                       <div>
-                        <div className='p-2 text-gray-400'>Sản Phẩm Mới Thêm</div>
+                        <div className='p-2 text-gray-400'>{t('aside filter.Recently Added Products')}</div>
                         {purchasesInCart.slice(0, 5).map((purchese) => (
                           <div className='flex p-2 hover:bg-gray-100' key={purchese._id}>
                             <div className=' flex-shrink-0 '>
@@ -89,11 +91,11 @@ export default function Header() {
                       </div>
                       <div className='mt-3 flex items-center justify-between p-2'>
                         <div className='text-xs text-gray-500'>
-                          {purchasesInCart.length > MAX_PURCHASE ? purchasesInCart.length - MAX_PURCHASE : ''} Thêm Vào
-                          Giỏ Hàng
+                          {purchasesInCart.length > MAX_PURCHASE ? purchasesInCart.length - MAX_PURCHASE : ''}{' '}
+                          {t('aside filter.More Products In Cart')}
                         </div>
                         <Link to={path.cart} className='rounded-sm bg-orange px-4 py-2 text-white hover:bg-opacity-80'>
-                          Xem Giỏ Hàng
+                          {t('aside filter.View My Shopping Cart')}
                         </Link>
                       </div>
                     </div>
@@ -104,7 +106,7 @@ export default function Header() {
                         alt='anh'
                         className=' h-[100px] w-[100px]  object-cover'
                       />
-                      <div className=' pt-2 text-center'>Chưa có sản phẩm</div>
+                      <div className=' pt-2 text-center'>{t('aside filter.No Products Yet')}</div>
                     </div>
                   )}
                 </div>

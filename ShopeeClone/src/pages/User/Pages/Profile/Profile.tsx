@@ -14,6 +14,7 @@ import { setProfileToLS } from 'src/utils/auth'
 import { getAvatarUrl, isAxiosUnproscessableEntityError } from 'src/utils/utils'
 import { ErrorResponse } from 'src/types/utils.type'
 import InputFile from 'src/components/InputFile'
+import { useTranslation } from 'react-i18next'
 
 type FormData = Pick<UserSchema, 'name' | 'address' | 'phone' | 'date_of_birth' | 'avatar'>
 type FormDataError = Omit<FormData, 'date_of_birth'> & {
@@ -22,6 +23,7 @@ type FormDataError = Omit<FormData, 'date_of_birth'> & {
 const profileSchema = userSchema.pick(['name', 'address', 'phone', 'avatar', 'date_of_birth'])
 
 export default function Profile() {
+  const { t } = useTranslation('profile')
   const { setProfile } = useContext(AppContext)
   const [file, setFile] = useState<File>()
 
@@ -110,8 +112,8 @@ export default function Profile() {
   return (
     <div className='rounded-sm bg-white px-2 pb-10 shadow-md md:px-7 md:pb-20'>
       <div className='border-b border-b-gray-200 py-6'>
-        <h1 className='text-lg font-medium capitalize text-gray-900'>Hồ Sơ Của Tôi</h1>
-        <div className='mt-1 text-sm text-gray-700'>Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
+        <h1 className='text-lg font-medium capitalize text-gray-900'>{t('My Purchases')}</h1>
+        <div className='mt-1 text-sm text-gray-700'>{t('Manage and protect your account')}</div>
       </div>
       <form className='mt-8 flex flex-col-reverse md:flex-row md:items-start' onSubmit={onSubmit}>
         <div className='mt-6 flex-grow md:mt-0 md:pr-12'>
@@ -122,7 +124,7 @@ export default function Profile() {
             </div>
           </div>
           <div className='mt-6 flex flex-col flex-wrap sm:flex-row'>
-            <div className='truncate pt-3 capitalize sm:w-[20%] sm:text-right'>Tên</div>
+            <div className='truncate pt-3 capitalize sm:w-[20%] sm:text-right'>{t('Name')}</div>
             <div className='sm:w-[80%] sm:pl-5'>
               <Input
                 register={register}
@@ -134,7 +136,7 @@ export default function Profile() {
             </div>
           </div>
           <div className='mt-2 flex flex-col flex-wrap sm:flex-row'>
-            <div className='truncate pt-3 capitalize sm:w-[20%] sm:text-right'>Số điện thoại</div>
+            <div className='truncate pt-3 capitalize sm:w-[20%] sm:text-right'>{t('Phone')}</div>
             <div className='sm:w-[80%] sm:pl-5'>
               <Controller
                 control={control}
@@ -152,7 +154,7 @@ export default function Profile() {
             </div>
           </div>
           <div className='mt-2 flex flex-col flex-wrap sm:flex-row'>
-            <div className='truncate pt-3 capitalize sm:w-[20%] sm:text-right'>Địa chỉ</div>
+            <div className='truncate pt-3 capitalize sm:w-[20%] sm:text-right'>{t('Address')}</div>
             <div className='sm:w-[80%] sm:pl-5'>
               <Input
                 register={register}
@@ -177,7 +179,7 @@ export default function Profile() {
                 type='submit'
                 className='flex h-9 items-center rounded-sm bg-orange px-5 text-center text-sm text-white hover:bg-orange/80'
               >
-                Lưu
+                {t('Confirm')}
               </Button>
             </div>
           </div>
@@ -193,8 +195,8 @@ export default function Profile() {
             </div>
             <InputFile onChange={handleChangeFile} />
             <div className='mt-3 text-gray-400'>
-              <div>Dụng lượng file tối đa 1 MB</div>
-              <div>Định dạng:.JPEG, .PNG</div>
+              <div>{t('File size: maximum 1 MB')}</div>
+              <div>{t('File extension: .JPEG, .PNG')}</div>
             </div>
           </div>
         </div>

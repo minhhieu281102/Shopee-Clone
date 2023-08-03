@@ -4,9 +4,11 @@ import path from 'src/constaints/path'
 import { AppContext } from 'src/contexts/app.context'
 import { getAvatarUrl } from 'src/utils/utils'
 import classNames from 'classnames'
+import { useTranslation } from 'react-i18next'
 
 export default function UserSideNav() {
   const { profile } = useContext(AppContext)
+  const { t } = useTranslation('profile')
   return (
     <div>
       <div className='flex items-center border-b border-b-gray-200 py-4'>
@@ -14,7 +16,7 @@ export default function UserSideNav() {
           <img src={getAvatarUrl(profile?.avatar)} alt='' className='h-full w-full object-cover' />
         </Link>
         <div className='flex-grow pl-4'>
-          <div className='mb-1 truncate font-semibold text-gray-600'>hieu</div>
+          <div className='mb-1 truncate font-semibold text-gray-600'>{profile?.name}</div>
           <Link to={path.profile} className='flex items-center capitalize text-gray-500'>
             <svg
               width={12}
@@ -29,7 +31,7 @@ export default function UserSideNav() {
                 fillRule='evenodd'
               />
             </svg>
-            Sửa hồ sơ
+            {t('edit profile')}
           </Link>
         </div>
       </div>
@@ -50,7 +52,7 @@ export default function UserSideNav() {
               className='h-full w-full'
             />
           </div>
-          Tài khoản của tôi
+          {t('My Profile')}
         </NavLink>
         <NavLink
           to={path.changePassword}
@@ -68,7 +70,7 @@ export default function UserSideNav() {
               className='h-full w-full'
             />
           </div>
-          Đổi mật khẩu
+          {t('Change Password')}
         </NavLink>
         <NavLink
           to={path.historyPurchase}
@@ -82,7 +84,7 @@ export default function UserSideNav() {
           <div className='mr-3 h-[22px] w-[22px]'>
             <img src='https://down-vn.img.susercontent.com/file/f0049e9df4e536bc3e7f140d071e9078' alt='' />
           </div>
-          Đơn mua
+          {t('My Purchases')}
         </NavLink>
       </div>
     </div>

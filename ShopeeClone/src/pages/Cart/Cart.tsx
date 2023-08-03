@@ -12,8 +12,10 @@ import { produce } from 'immer'
 import keyBy from 'lodash/keyBy'
 import { toast } from 'react-toastify'
 import { AppContext } from 'src/contexts/app.context'
+import { useTranslation } from 'react-i18next'
 
 export default function Cart() {
+  const { t } = useTranslation('cart')
   const { extendedPurchases, setExtendedPurchases } = useContext(AppContext)
   const { data: purchasesInCartData, refetch } = useQuery({
     queryKey: ['purchases', { status: purchasesStatus.inCart }],
@@ -81,7 +83,7 @@ export default function Cart() {
         }) || []
       )
     })
-  }, [purchasesInCart, choosenPurchaseIdFromLocation])
+  }, [purchasesInCart, choosenPurchaseIdFromLocation, setExtendedPurchases])
 
   useEffect(() => {
     return () => {
@@ -167,15 +169,15 @@ export default function Cart() {
                           onChange={handleCheckedAll}
                         />
                       </div>
-                      <div className='flex-grow text-black'>Sản phẩm</div>
+                      <div className='flex-grow text-black'>{t('Product')}</div>
                     </div>
                   </div>
                   <div className='col-span-6'>
                     <div className='grid grid-cols-5 text-center'>
-                      <div className='col-span-2'>Đơn giá</div>
-                      <div className='col-span-1'>Số lượng</div>
-                      <div className='col-span-1'>Số tiền</div>
-                      <div className='col-span-1'>Thao tác</div>
+                      <div className='col-span-2'>{t('Unit Price')}</div>
+                      <div className='col-span-1'>{t('Quantity')}</div>
+                      <div className='col-span-1'>{t('Total Price')}</div>
+                      <div className='col-span-1'>{t('Actions')}</div>
                     </div>
                   </div>
                 </div>
@@ -262,7 +264,7 @@ export default function Cart() {
                                 onClick={handleDelete(index)}
                                 className='bg-none text-black transition-colors hover:text-orange'
                               >
-                                Xóa
+                                {t('Delete')}
                               </button>
                             </div>
                           </div>
@@ -284,21 +286,21 @@ export default function Cart() {
                   />
                 </div>
                 <button className='mx-3 border-none bg-none' onClick={handleCheckedAll}>
-                  Chọn tất cả ({extendedPurchases.length})
+                  {t('Select all')} ({extendedPurchases.length})
                 </button>
                 <button onClick={handleDeleteManyPurchases} className='mx-3 border-none bg-none'>
-                  Xóa
+                  {t('Delete')}
                 </button>
               </div>
 
               <div className='mt-5 flex flex-col sm:ml-auto sm:mt-0 sm:flex-row sm:items-center'>
                 <div>
                   <div className='flex items-center sm:justify-end'>
-                    <div>Tổng thanh toán:({checkedPurchasesCount} sản phẩm)</div>
+                    <div>{`${t('Total')} (${checkedPurchasesCount} ${t('items')})`}</div>
                     <div className='ml-2 text-2xl text-orange'>₫{formatCurrency(totalCheckedPurchasesPrice)}</div>
                   </div>
                   <div className='flex items-center text-sm sm:justify-end'>
-                    <div className='text-gray-500'>Tiếp kiệm</div>
+                    <div className='text-gray-500'>{t('Saved')}</div>
                     <div className='ml-6 text-orange'>₫{formatCurrency(totalCheckedPurchasesSavingPrice)}</div>
                   </div>
                 </div>
@@ -307,7 +309,7 @@ export default function Cart() {
                   disabled={buyProductMutation.isLoading}
                   className='mt-5 flex h-10 w-52 items-center justify-center bg-red-500 text-sm uppercase text-white hover:bg-red-600 sm:ml-4 sm:mt-0'
                 >
-                  Mua hàng
+                  {t('Check Out')}
                 </Button>
               </div>
             </div>

@@ -3,12 +3,17 @@ import ProductRating from 'src/components/ProductRating'
 import path from 'src/constaints/path'
 import { Product as ProductType } from 'src/types/product.type'
 import { formatCurrency, formatNumberToSocialStyle, generateNameId } from 'src/utils/utils'
+import { useTranslation } from 'react-i18next'
+import { locales } from 'src/i18n/i18n'
 
 interface Props {
   product: ProductType
 }
 
 export default function Product({ product }: Props) {
+  const { t, i18n } = useTranslation('home')
+  const currentLanguage = locales[i18n.language as keyof typeof locales]
+
   return (
     <Link to={`${path.home}${generateNameId({ name: product.name, id: product._id })}`}>
       <div className='shadown overflow-hidden rounded-sm  bg-white transition-transform duration-100 hover:translate-y-[-0.04rem] hover:shadow-sm'>
@@ -33,10 +38,17 @@ export default function Product({ product }: Props) {
           </div>
           <div className='mt-3 flex items-center justify-start'>
             <ProductRating rating={product.rating} />
-            <div className='ml-2 text-xs '>
-              <span className='mr-1 '>Đã bán</span>
-              <span>{formatNumberToSocialStyle(product.sold)}</span>
-            </div>
+            {currentLanguage !== 'English' ? (
+              <div className='ml-2 text-xs '>
+                <span className='mr-1 '>{t('aside filter.sold')}</span>
+                <span>{formatNumberToSocialStyle(product.sold)}</span>
+              </div>
+            ) : (
+              <div className='ml-2 text-xs '>
+                <span>{formatNumberToSocialStyle(product.sold)}</span>
+                <span className='ml-1 '>{t('aside filter.sold')}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

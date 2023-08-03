@@ -7,8 +7,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import authApi from 'src/apis/auth.api'
 import { purchasesStatus } from 'src/constaints/purchase'
 import { getAvatarUrl } from 'src/utils/utils'
+import { useTranslation } from 'react-i18next'
+import { locales } from 'src/i18n/i18n'
 
 export default function NavHeader() {
+  const { i18n, t } = useTranslation('home')
+  const currentLanguage = locales[i18n.language as keyof typeof locales]
   const queryClient = useQueryClient()
   const { isAuthenticated, profile, setIsAuthenticated, setProfile } = useContext(AppContext)
   const logoutMutation = useMutation({
@@ -23,12 +27,16 @@ export default function NavHeader() {
   const handleLogout = () => {
     logoutMutation.mutate()
   }
+
+  const changeLanguage = (lng: 'en' | 'vi') => {
+    i18n.changeLanguage(lng)
+  }
   return (
     <div>
       <div className='flex '>
         <div className='flex w-full cursor-pointer items-center justify-start'>
-          <div className='border-r-2 pr-2 hover:opacity-80'>Kênh người bán</div>
-          <div className='pl-2 hover:opacity-80'>Tải ứng dụng</div>
+          <div className='border-r-2 pr-2 hover:opacity-80'>{t('aside filter.seller centre')}</div>
+          <div className='pl-2 hover:opacity-80'>{t('aside filter.download')}</div>
         </div>
         <div className='flex w-full justify-end'>
           <Popover
@@ -36,8 +44,12 @@ export default function NavHeader() {
             renderPopover={
               <div className='relative   translate-y-[-1%] rounded-sm  bg-white shadow-md'>
                 <div className='flex flex-col px-3 py-2'>
-                  <button className='px-3 py-2 hover:text-orange'>Tiếng Việt</button>
-                  <button className='mt-2 px-3 py-2 hover:text-orange'>Tiếng Anh</button>
+                  <button className='px-3 py-2 hover:text-orange' onClick={() => changeLanguage('vi')}>
+                    Tiếng Việt
+                  </button>
+                  <button className='mt-2 px-3 py-2 hover:text-orange' onClick={() => changeLanguage('en')}>
+                    Tiếng Anh
+                  </button>
                 </div>
               </div>
             }
@@ -56,7 +68,7 @@ export default function NavHeader() {
                 d='M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418'
               />
             </svg>
-            <span className='mx-1'>Tiếng Việt</span>
+            <span className='mx-1 '>{currentLanguage}</span>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               fill='none'
@@ -77,19 +89,19 @@ export default function NavHeader() {
                     to={path.profile}
                     className='block w-full bg-white px-4 py-3 text-left hover:bg-slate-100 hover:text-cyan-500 '
                   >
-                    Tài khoản của tôi
+                    {t('aside filter.My Account')}
                   </Link>
                   <Link
                     to={path.historyPurchase}
                     className='block w-full bg-white px-4 py-3 text-left hover:bg-slate-100 hover:text-cyan-500'
                   >
-                    Đơn mua
+                    {t('aside filter.My Purchase')}
                   </Link>
                   <button
                     onClick={handleLogout}
                     className='block w-full bg-white px-4 py-3 text-left hover:bg-slate-100 hover:text-cyan-500'
                   >
-                    Đăng xuất
+                    {t('aside filter.Logout')}
                   </button>
                 </div>
               }
