@@ -75,7 +75,6 @@ class Http {
         }
         if (isAxiosExpiredTokenError<ErrorResponse<{ name: string; message: string }>>(error)) {
           const config = error.response?.config || ({ headers: {} } as InternalAxiosRequestConfig)
-          console.log(config)
           const { url } = config
           if (isAxiosExpiredTokenError(error) && url !== URL_REFRESH_TOKEN) {
             this.refreshTokenRequest = this.refreshTokenRequest

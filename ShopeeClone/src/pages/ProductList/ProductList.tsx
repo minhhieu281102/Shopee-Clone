@@ -7,6 +7,7 @@ import Pagination from 'src/components/Pagination'
 import { ProductListConfig } from 'src/types/product.type'
 import categoryApi from 'src/apis/category.api'
 import useQueryConfig from 'src/hooks/useQueryConfig'
+import { Helmet } from 'react-helmet-async'
 
 export type QueryConfig = {
   [key in keyof ProductListConfig]: string
@@ -32,6 +33,10 @@ export default function ProductList() {
 
   return (
     <div className='bg-gray-200 py-6'>
+      <Helmet>
+        <title>Trang chủ</title>
+        <meta name='description' content='Trang chủ' />
+      </Helmet>
       <div className='container'>
         {productData && (
           <div className='grid grid-cols-12 gap-6'>

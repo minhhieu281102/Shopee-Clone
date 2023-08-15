@@ -1,8 +1,14 @@
 /* eslint-disable react/no-unescaped-entities */
 
+import { Helmet } from 'react-helmet-async'
+
 export default function NotFound() {
   return (
     <div className='flex h-[calc(100vh-80px)] w-full items-center justify-center bg-white p-5'>
+      <Helmet>
+        <title>Not Found</title>
+        <meta name='description' content='Not Found' />
+      </Helmet>
       <div className='text-center'>
         <div className='inline-flex rounded-full bg-yellow-100 p-4'>
           <div className='rounded-full bg-yellow-200 stroke-yellow-600 p-4'>
